@@ -583,7 +583,10 @@ impl HtmlSplitChildrenBuilder {
     fn non_text_entry(&mut self, child: HtmlChild, f: &HtmlFormatter) {
         let element = match &child {
             HtmlChild::NonText(element) | HtmlChild::Verbatim(element) => element,
+            #[cfg(debug_assertions)]
             _ => unreachable!("non_text_entry must be called with a non-text child"),
+            #[cfg(not(debug_assertions))]
+            _ => return, // avoid panicking in release builds
         };
 
         if !get_element_css_display(element).is_externally_whitespace_sensitive(f)
